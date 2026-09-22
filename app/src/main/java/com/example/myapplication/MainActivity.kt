@@ -1,74 +1,93 @@
 package com.example.myapplication
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MaterialTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Activity1Screen {
-                            textInput ->
-                        val intent = Intent(this, Activity2::class.java)
-                        intent.putExtra("text_input", textInput)
-                        startActivity(intent)
-                    }
-                }
-            }
+            AppNavigation()
         }
     }
 }
 
 @Composable
-fun Activity1Screen(onButtonClick: (String) -> Unit) {
+fun AppNavigation() {
+    val navController = rememberNavController()
 
-    var textInput by remember { mutableStateOf("") }
+    val nim = "245150700111001"
+    val nama = "Jyesthaka Nabeel Anindya Virendra"
 
+    NavHost(
+        navController = navController,
+        startDestination = "screen1"
+    ) {
+        composable("screen1") {
+            Screen1(
+                nim = nim,
+                nama = nama,
+                onNavigate = {
+                    navController.navigate("screen2")
+                }
+            )
+        }
+
+        composable("screen2") {
+            Screen2(
+                nim = nim,
+                nama = nama
+            )
+        }
+    }
+}
+
+@Composable
+fun Screen1(
+    nim: String,
+    nama: String,
+    onNavigate: () -> Unit
+) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Text(text = "NIM: $nim")
+        Text(text = "Nama: $nama")
+        Text(text = "Screen 1")
 
-        Text(text = "NIM: 245150400111008")
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(text = "Nama: Jyesthaka Nabeel Anindya Virendra")
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        TextField(
-            value = textInput,
-            onValueChange = { textInput = it },
-            label = {
-                Text("Masukkan Text")
-            }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                onButtonClick(textInput)
-            }
-        ) {
-            Text("Kirim")
+        Button(onClick = onNavigate) {
+            Text("Ke Halaman 2")
         }
+    }
+}
+
+@Composable
+fun Screen2(
+    nim: String,
+    nama: String
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = "NIM: $nim")
+        Text(text = "Nama: $nama")
+        Text(text = "Screen 2")
     }
 }
